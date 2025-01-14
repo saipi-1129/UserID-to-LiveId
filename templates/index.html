@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <meta http-equiv="refresh" content="2; URL="> -->
+    <title>オンラインユーザー</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        box-sizing: border-box; /* スクロールバーのズレ対策 */
+      }
+    
+      h1 {
+        color: #4caf50;
+        text-align: center;
+        font-size: 2em; /* モバイルでも読みやすいサイズに */
+      }
+    
+      input,
+      button {
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        width: 100%; /* モバイル画面に合わせるために幅を100%に */
+        box-sizing: border-box;
+      }
+    
+      button {
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+      }
+    
+      button:hover {
+        background-color: #45a049;
+      }
+    
+      .fa-refresh {
+        cursor: pointer;
+      }
+    
+      #time {
+        font-size: 18px;
+        margin: 20px 0;
+      }
+    
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 600px;
+        height: 1000px; /* モバイル表示用に高さを調整 */
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fff;
+      }
+    
+      li {
+        background-color: #fff;
+        margin: 5px 0;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        
+      }
+    
+      #error {
+        color: red;
+        font-weight: bold;
+      }
+    
+      .how img {
+        max-width: 600px; /* 画像の最大幅を設定 */
+        width: 100%; /* 幅を100%にして親要素に合わせる */
+        height: auto; /* 高さは自動調整 */
+      }
+    
+      /* モバイル用のスタイル */
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+    
+        h1 {
+          font-size: 1.5em;
+        }
+    
+        ul {
+          height: 1000px; /* モバイル表示用にリストの高さをさらに調整 */
+        }
+    
+        input,
+        button {
+          font-size: 14px;
+        }
+    
+        .how img {
+          max-width: 100%; /* スマホの画面幅に合わせて画像を縮小 */
+          height: auto;
+        }
+      }
+    </style>
+    
+  </head>
+  <body>
+    <h1>UserIDから配信中のURLを取得</h1>
+    <div class="how">
+      <!-- <img src="images/example.png" alt="" >  -->
+    </div>
+
+
+    <form action="/userid" method="POST">
+      <label for="userid">UserID:</label>
+      <input name="userid" value=""></input>
+      <button type="submit">送信</button>
+    </form>
+    {% if live_id %}
+    <h1>{{ name }}は配信中です。配信URLは</h1>
+    <h2>https://www.mirrativ.com/live/{{ live_id }}</h2>
+  {% endif %}
+  {% if error %}
+  <h1>{{ error }}</h1>
+  {% endif %}
+  </body>
+</html>
