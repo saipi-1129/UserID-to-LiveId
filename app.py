@@ -27,7 +27,7 @@ def top():
                 return render_template("index.html",live_id=live_id,name=name,error=None)
             except:
                 print("レスポンスの解析中にエラーが発生したか、ユーザが配信していません。")
-                return render_template("index.html",live_id=False,name=False,error="ユーザーIDが正しいか確認してから再度お試しください。")
+                return render_template("index.html",live_id=False,name=False,error="ユーザが配信していません。")
         else:
             print(f"リクエストに失敗しました。ステータスコード: {res.status_code}")
             return render_template("index.html",live_id=False,name=False,error="ユーザーIDが正しいか確認してから再度お試しください。")
