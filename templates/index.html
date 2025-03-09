@@ -1,139 +1,98 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <meta http-equiv="refresh" content="2; URL="> -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>オンラインユーザー</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f0f0;
-        color: #333;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        box-sizing: border-box; /* スクロールバーのズレ対策 */
-      }
-    
-      h1 {
-        color: #4caf50;
-        text-align: center;
-        font-size: 2em; /* モバイルでも読みやすいサイズに */
-      }
-    
-      input,
-      button {
-        padding: 10px;
-        margin: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 16px;
-        width: 100%; /* モバイル画面に合わせるために幅を100%に */
-        box-sizing: border-box;
-      }
-    
-      button {
-        background-color: #4caf50;
-        color: white;
-        cursor: pointer;
-      }
-    
-      button:hover {
-        background-color: #45a049;
-      }
-    
-      .fa-refresh {
-        cursor: pointer;
-      }
-    
-      #time {
-        font-size: 18px;
-        margin: 20px 0;
-      }
-    
-      ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        width: 100%;
-        max-width: 600px;
-        height: 1000px; /* モバイル表示用に高さを調整 */
-        overflow-y: auto;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background-color: #fff;
-      }
-    
-      li {
-        background-color: #fff;
-        margin: 5px 0;
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-satellite-dish"></i> 配信ステータス確認</h1>
+        </header>
         
-      }
-    
-      #error {
-        color: red;
-        font-weight: bold;
-      }
-    
-      .how img {
-        max-width: 600px; /* 画像の最大幅を設定 */
-        width: 100%; /* 幅を100%にして親要素に合わせる */
-        height: auto; /* 高さは自動調整 */
-      }
-    
-      /* モバイル用のスタイル */
-      @media (max-width: 600px) {
-        body {
-          padding: 10px;
-        }
-    
-        h1 {
-          font-size: 1.5em;
-        }
-    
-        ul {
-          height: 1000px; /* モバイル表示用にリストの高さをさらに調整 */
-        }
-    
-        input,
-        button {
-          font-size: 14px;
-        }
-    
-        .how img {
-          max-width: 100%; /* スマホの画面幅に合わせて画像を縮小 */
-          height: auto;
-        }
-      }
-    </style>
-    
-  </head>
-  <body>
-    <h1>UserIDから配信中のURLを取得</h1>
-    <div class="how">
-      <!-- <img src="images/example.png" alt="" >  -->
+        <div class="card search-card">
+            <div class="card-header">
+                <i class="fas fa-search"></i>
+                <h2>UserIDから配信を検索</h2>
+            </div>
+            
+            <form action="/userid" method="POST" class="search-form">
+                <div class="form-group">
+                    <label for="userid">ユーザーID</label>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="userid" name="userid" value="" placeholder="検索するユーザーIDを入力" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> 配信を検索
+                </button>
+            </form>
+        </div>
+        
+        {% if live_id %}
+        <div class="card result-card live">
+            <div class="status-icon">
+                <i class="fas fa-video pulse"></i>
+            </div>
+            <div class="result-content">
+                <h3><span class="highlight">{{ name }}</span> は現在配信中です</h3>
+                <div class="url-container">
+                    <div class="url-label">配信URL:</div>
+                    <div class="url-box">
+                        <a href="https://www.mirrativ.com/live/{{ live_id }}" target="_blank" class="stream-url">
+                            https://www.mirrativ.com/live/{{ live_id }}
+                        </a>
+                        <button class="copy-btn" onclick="copyToClipboard('https://www.mirrativ.com/live/{{ live_id }}')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <a href="https://www.mirrativ.com/live/{{ live_id }}" target="_blank" class="btn btn-watch">
+                        <i class="fas fa-play-circle"></i> 配信を視聴
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if error %}
+        <div class="card result-card offline">
+            <div class="status-icon">
+                <i class="fas fa-video-slash"></i>
+            </div>
+            <div class="result-content">
+                <h3><span class="highlight">{{ name }}</span> は現在配信していません</h3>
+                <p class="error-message">{{ error }}</p>
+                <div class="action-buttons">
+                    <button class="btn btn-retry" onclick="location.reload()">
+                        <i class="fas fa-redo"></i> 再検索
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <footer>
+            <p>© 2025 配信ステータスチェッカー</p>
+        </footer>
     </div>
-
-
-    <form action="/userid" method="POST">
-      <label for="userid">UserID:</label>
-      <input name="userid" value=""></input>
-      <button type="submit">送信</button>
-    </form>
-    {% if live_id %}
-    <h1>{{ name }}は配信中です。配信URLは</h1>
-    <h2>https://www.mirrativ.com/live/{{ live_id }}</h2>
-  {% endif %}
-  {% if error %}
-  <h2>{{ name }}は配信していません。</h2>
-  <h1>{{ error }}</h1>
-  {% endif %}
-  </body>
+    
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                const copyBtn = document.querySelector('.copy-btn');
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(function() {
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
 </html>
